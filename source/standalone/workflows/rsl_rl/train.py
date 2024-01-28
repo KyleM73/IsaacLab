@@ -60,6 +60,7 @@ from omni.isaac.orbit.envs import RLTaskEnvCfg
 from omni.isaac.orbit.utils.dict import print_dict
 from omni.isaac.orbit.utils.io import dump_pickle, dump_yaml
 
+import hcrl_orbit  # noqa: F401
 import omni.isaac.contrib_tasks  # noqa: F401
 import omni.isaac.orbit_tasks  # noqa: F401
 from omni.isaac.orbit_tasks.utils import get_checkpoint_path, parse_env_cfg
