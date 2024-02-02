@@ -120,6 +120,9 @@ def main():
     if args_cli.plot:
         q = []
         qdot = []
+    # to mitigate the first-few-frames-black problem (see orbit known issues)
+    for _ in range(100):
+        env.unwrapped.sim.render()
     # simulate environment
     while simulation_app.is_running():
         # run everything in inference mode
