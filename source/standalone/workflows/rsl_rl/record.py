@@ -133,8 +133,10 @@ def main():
             obs, _, _, _ = env.step(actions)
             env.unwrapped.render()
         if args_cli.plot:
-            q.append(obs[0, 12:12+27].view(1,27).cpu())
-            qdot.append(obs[0, 12+27:12+27+27].view(1,27).cpu())
+            q.append(obs[0, 0:3].view(1,3).cpu()) #command
+            qdot.append(obs[0, 3:6].view(1,3).cpu())
+            #q.append(obs[0, 12:12+27].view(1,27).cpu())
+            #qdot.append(obs[0, 12+27:12+27+27].view(1,27).cpu())
         if not step % 50: print("Step {}/{}...".format(step, args_cli.video_length))
         if step > args_cli.video_length:
             break
@@ -151,6 +153,11 @@ def main():
 
         fig,ax = plt.subplots(2)
         joints = [
+            ["x", 0],
+            ["y", 1],
+            ["yaw", 2],
+        ]
+        """joints = [
             ["l_hip_fe",  9],
             ["r_hip_fe", 11],
             ["l_knee_fe_jp", 13],
@@ -159,7 +166,7 @@ def main():
             ["r_knee_fe_jd", 19],
             ["l_ankle_fe", 21],
             ["r_ankle_fe", 23],
-            ]
+            ]"""
         for name, i in joints:
             ax[0].plot(q[:,i],label=name) 
             ax[1].plot(qdot[:,i],label=name)
