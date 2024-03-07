@@ -1,6 +1,47 @@
 Changelog
 ---------
 
+0.5.7 (2024-02-28)
+~~~~~~~~~~~~~~~~~~
+
+Fixed
+^^^^^
+
+* Updated the RL wrapper for the skrl library to the latest release (>= 1.1.0)
+
+
+0.5.6 (2024-02-21)
+~~~~~~~~~~~~~~~~~~
+
+Fixed
+^^^^^
+
+* Fixed the configuration parsing to support a pre-initialized configuration object.
+
+
+0.5.5 (2024-02-05)
+~~~~~~~~~~~~~~~~~~
+
+Fixed
+^^^^^
+
+* Pinned :mod:`torch` version to 2.0.1 in the setup.py to keep parity version of :mod:`torch` supplied by
+  Isaac 2023.1.1, and prevent version incompatibility between :mod:`torch` ==2.2 and
+  :mod:`typing-extensions` ==3.7.4.3
+
+
+0.5.4 (2024-02-06)
+~~~~~~~~~~~~~~~~~~
+
+Added
+^^^^^
+
+* Added a check for the flag :attr:`omni.isaac.orbit.envs.RLTaskEnvCfg.is_finite_horizon`
+  in the RSL-RL and RL-Games wrappers to handle the finite horizon tasks properly. Earlier,
+  the wrappers were always assuming the tasks to be infinite horizon tasks and returning a
+  time-out signals when the episode length was reached.
+
+
 0.5.3 (2023-11-16)
 ~~~~~~~~~~~~~~~~~~
 

@@ -78,7 +78,7 @@ class TestSimulationContext(unittest.TestCase):
         sim = SimulationContext()
         version = sim.get_version()
         self.assertTrue(len(version) > 0)
-        self.assertTrue(version[0] >= 2022)
+        self.assertTrue(version[0] >= 2023)
 
     def test_carb_setting(self):
         """Test setting carb settings."""
@@ -124,6 +124,16 @@ class TestSimulationContext(unittest.TestCase):
         # clear the simulation
         sim.clear_instance()
         self.assertEqual(ctypes.c_long.from_address(id(sim)).value, sim_ref_count - 1)
+
+    def test_zero_gravity(self):
+        """Test that gravity can be properly disabled."""
+        cfg = SimulationCfg(gravity=(0.0, 0.0, 0.0))
+
+        sim = SimulationContext(cfg)
+
+        gravity_dir, gravity_mag = sim.get_physics_context().get_gravity()
+        gravity = np.array(gravity_dir) * gravity_mag
+        np.testing.assert_almost_equal(gravity, cfg.gravity)
 
 
 if __name__ == "__main__":

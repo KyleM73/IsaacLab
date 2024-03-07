@@ -9,8 +9,9 @@
 from __future__ import annotations
 
 import torch
+from collections.abc import Sequence
 from prettytable import PrettyTable
-from typing import TYPE_CHECKING, Sequence
+from typing import TYPE_CHECKING
 
 import carb
 import omni.physics.tensors.impl.api as physx
@@ -515,6 +516,8 @@ class Articulation(RigidObject):
         # process configuration
         self._process_cfg()
         self._process_actuators_cfg()
+        # validate configuration
+        self._validate_cfg()
         # log joint information
         self._log_articulation_joint_info()
 
@@ -698,19 +701,59 @@ class Articulation(RigidObject):
     Internal helpers -- Debugging.
     """
 
+    def _validate_cfg(self):
+        """Validate the configuration after processing.
+
+        Note:
+            This function should be called only after the configuration has been processed and the buffers have been
+            created. Otherwise, some settings that are altered during processing may not be validated.
+            For instance, the actuator models may change the joint max velocity limits.
+        """
+        # check that the default values are within the limits
+        joint_pos_limits = self.root_physx_view.get_dof_limits()[0].to(self.device)
+        out_of_range = self._data.default_joint_pos[0] < joint_pos_limits[:, 0]
+        out_of_range |= self._data.default_joint_pos[0] > joint_pos_limits[:, 1]
+        violated_indices = torch.nonzero(out_of_range, as_tuple=False).squeeze(-1)
+        # throw error if any of the default joint positions are out of the limits
+        if len(violated_indices) > 0:
+            # prepare message for violated joints
+            msg = "The following joints have default positions out of the limits: \n"
+            for idx in violated_indices:
+                joint_name = self.data.joint_names[idx]
+                joint_limits = joint_pos_limits[idx]
+                joint_pos = self.data.default_joint_pos[0, idx]
+                # add to message
+                msg += f"\t- '{joint_name}': {joint_pos:.3f} not in [{joint_limits[0]:.3f}, {joint_limits[1]:.3f}]\n"
+            raise ValueError(msg)
+
+        # check that the default joint velocities are within the limits
+        joint_max_vel = self.root_physx_view.get_dof_max_velocities()[0].to(self.device)
+        out_of_range = torch.abs(self._data.default_joint_vel[0]) > joint_max_vel
+        violated_indices = torch.nonzero(out_of_range, as_tuple=False).squeeze(-1)
+        if len(violated_indices) > 0:
+            # prepare message for violated joints
+            msg = "The following joints have default velocities out of the limits: \n"
+            for idx in violated_indices:
+                joint_name = self.data.joint_names[idx]
+                joint_limits = [-joint_max_vel[idx], joint_max_vel[idx]]
+                joint_vel = self.data.default_joint_vel[0, idx]
+                # add to message
+                msg += f"\t- '{joint_name}': {joint_vel:.3f} not in [{joint_limits[0]:.3f}, {joint_limits[1]:.3f}]\n"
+            raise ValueError(msg)
+
     def _log_articulation_joint_info(self):
         """Log information about the articulation's simulated joints."""
         # read out all joint parameters from simulation
         # -- gains
-        stiffnesses = self.root_physx_view.get_dof_stiffnesses()[0].squeeze(0).tolist()
-        dampings = self.root_physx_view.get_dof_dampings()[0].squeeze(0).tolist()
+        stiffnesses = self.root_physx_view.get_dof_stiffnesses()[0].tolist()
+        dampings = self.root_physx_view.get_dof_dampings()[0].tolist()
         # -- properties
-        armatures = self.root_physx_view.get_dof_armatures()[0].squeeze(0).tolist()
-        frictions = self.root_physx_view.get_dof_friction_coefficients()[0].squeeze(0).tolist()
+        armatures = self.root_physx_view.get_dof_armatures()[0].tolist()
+        frictions = self.root_physx_view.get_dof_friction_coefficients()[0].tolist()
         # -- limits
-        position_limits = self.root_physx_view.get_dof_limits()[0].squeeze(0).tolist()
-        velocity_limits = self.root_physx_view.get_dof_max_velocities()[0].squeeze(0).tolist()
-        effort_limits = self.root_physx_view.get_dof_max_forces()[0].squeeze(0).tolist()
+        position_limits = self.root_physx_view.get_dof_limits()[0].tolist()
+        velocity_limits = self.root_physx_view.get_dof_max_velocities()[0].tolist()
+        effort_limits = self.root_physx_view.get_dof_max_forces()[0].tolist()
         # create table for term information
         table = PrettyTable(float_format=".3f")
         table.title = f"Simulation Joint Information (Prim path: {self.cfg.prim_path})"
@@ -729,18 +772,16 @@ class Articulation(RigidObject):
         table.align["Name"] = "l"
         # add info on each term
         for index, name in enumerate(self.joint_names):
-            table.add_row(
-                [
-                    index,
-                    name,
-                    stiffnesses[index],
-                    dampings[index],
-                    armatures[index],
-                    frictions[index],
-                    position_limits[index],
-                    velocity_limits[index],
-                    effort_limits[index],
-                ]
-            )
+            table.add_row([
+                index,
+                name,
+                stiffnesses[index],
+                dampings[index],
+                armatures[index],
+                frictions[index],
+                position_limits[index],
+                velocity_limits[index],
+                effort_limits[index],
+            ])
         # convert table to string
         carb.log_info(f"Simulation parameters for joints in {self.cfg.prim_path}:\n" + table.get_string())

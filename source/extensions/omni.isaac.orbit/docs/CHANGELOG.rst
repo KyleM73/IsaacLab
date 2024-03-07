@@ -1,6 +1,175 @@
 Changelog
 ---------
 
+0.11.3 (2024-03-04)
+~~~~~~~~~~~~~~~~~~~
+
+Fixed
+^^^^^
+
+* Corrects the functions :func:`omni.isaac.orbit.utils.math.axis_angle_from_quat` and :func:`omni.isaac.orbit.utils.math.quat_error_magnitude`
+  to accept tensors of the form (..., 4) instead of (N, 4). This brings us in line with our documentation and also upgrades one of our functions
+  to handle higher dimensions.
+
+
+0.11.2 (2024-03-04)
+~~~~~~~~~~~~~~~~~~~
+
+Added
+^^^^^
+
+* Added checks for default joint position and joint velocity in the articulation class. This is to prevent
+  users from configuring values for these quantities that might be outside the valid range from the simulation.
+
+
+0.11.1 (2024-02-29)
+~~~~~~~~~~~~~~~~~~~
+
+Added
+^^^^^
+
+* Replaced the default values for ``joint_ids`` and ``body_ids`` from ``None`` to ``slice(None)``
+  in the :class:`omni.isaac.orbit.managers.SceneEntityCfg`.
+* Adapted rewards and observations terms so that the users can query a subset of joints and bodies.
+
+
+0.11.0 (2024-02-27)
+~~~~~~~~~~~~~~~~~~~
+
+Removed
+^^^^^^^
+
+* Dropped support for Isaac Sim<=2022.2. As part of this, removed the components of :class:`omni.isaac.orbit.app.AppLauncher`
+  which handled ROS extension loading. We no longer need them in Isaac Sim>=2023.1 to control the load order to avoid crashes.
+* Upgraded Dockerfile to use ISAACSIM_VERSION=2023.1.1 by default.
+
+
+0.10.28 (2024-02-29)
+~~~~~~~~~~~~~~~~~~~~
+
+Added
+^^^^^
+
+* Implemented relative and moving average joint position action terms. These allow the user to specify
+  the target joint positions as relative to the current joint positions or as a moving average of the
+  joint positions over a window of time.
+
+
+0.10.27 (2024-02-28)
+~~~~~~~~~~~~~~~~~~~~
+
+Added
+^^^^^
+
+* Added UI feature to start and stop animation recording in the stage when running an environment.
+  To enable this feature, please pass the argument ``--disable_fabric`` to the environment script to allow
+  USD read/write operations. Be aware that this will slow down the simulation.
+
+
+0.10.26 (2024-02-26)
+~~~~~~~~~~~~~~~~~~~~
+
+Added
+^^^^^
+
+* Added a viewport camera controller class to the :class:`omni.isaac.orbit.envs.BaseEnv`. This is useful
+  for applications where the user wants to render the viewport from different perspectives even when the
+  simulation is running in headless mode.
+
+
+0.10.25 (2024-02-26)
+~~~~~~~~~~~~~~~~~~~~
+
+Fixed
+^^^^^
+
+* Ensures that all path arguments in :mod:`omni.isaac.orbit.sim.utils` are cast to ``str``. Previously,
+  we had handled path types as strings without casting.
+
+
+0.10.24 (2024-02-26)
+~~~~~~~~~~~~~~~~~~~~
+
+Added
+^^^^^
+
+* Added tracking of contact time in the :class:`omni.isaac.orbit.sensors.ContactSensor` class. Previously,
+  only the air time was being tracked.
+* Added contact force threshold, :attr:`omni.isaac.orbit.sensors.ContactSensorCfg.force_threshold`, to detect
+  when the contact sensor is in contact. Previously, this was set to hard-coded 1.0 in the sensor class.
+
+
+0.10.23 (2024-02-21)
+~~~~~~~~~~~~~~~~~~~~
+
+Fixed
+^^^^^
+
+* Fixes the order of size arguments in :meth:`omni.isaac.orbit.terrains.height_field.random_uniform_terrain`. Previously, the function would crash if the size along x and y were not the same.
+
+
+0.10.22 (2024-02-14)
+~~~~~~~~~~~~~~~~~~~~
+
+Fixed
+^^^^^
+
+* Fixed "divide by zero" bug in :class:`~omni.isaac.orbit.sim.SimulationContext` when setting gravity vector.
+  Now, it is correctly disabled when the gravity vector is set to zero.
+
+
+0.10.21 (2024-02-12)
+~~~~~~~~~~~~~~~~~~~~
+
+Fixed
+^^^^^
+
+* Fixed the printing of articulation joint information when the articulation has only one joint.
+  Earlier, the function was performing a squeeze operation on the tensor, which caused an error when
+  trying to index the tensor of shape (1,).
+
+
+0.10.20 (2024-02-12)
+~~~~~~~~~~~~~~~~~~~~
+
+Added
+^^^^^
+
+* Adds :attr:`omni.isaac.orbit.sim.PhysxCfg.enable_enhanced_determinism` to enable improved
+  determinism from PhysX. Please note this comes at the expense of performance.
+
+
+0.10.19 (2024-02-08)
+~~~~~~~~~~~~~~~~~~~~
+
+Fixed
+^^^^^
+
+* Fixed environment closing so that articulations, objects, and sensors are cleared properly.
+
+
+0.10.18 (2024-02-05)
+~~~~~~~~~~~~~~~~~~~~
+
+Fixed
+^^^^^
+
+* Pinned :mod:`torch` version to 2.0.1 in the setup.py to keep parity version of :mod:`torch` supplied by
+  Isaac 2023.1.1, and prevent version incompatibility between :mod:`torch` ==2.2 and
+  :mod:`typing-extensions` ==3.7.4.3
+
+
+0.10.17 (2024-02-02)
+~~~~~~~~~~~~~~~~~~~~
+
+Fixed
+^^^^^^
+
+* Fixed carb setting ``/app/livestream/enabled`` to be set as False unless live-streaming is specified
+  by :class:`omni.isaac.orbit.app.AppLauncher` settings. This fixes the logic of :meth:`SimulationContext.render`,
+  which depended on the config in previous versions of Isaac defaulting to false for this setting.
+
+
 0.10.16 (2024-01-29)
 ~~~~~~~~~~~~~~~~~~~~
 
