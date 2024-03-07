@@ -62,7 +62,6 @@ from omni.isaac.orbit.utils.io import dump_pickle, dump_yaml
 
 import omni.isaac.contrib_tasks  # noqa: F401
 import omni.isaac.orbit_tasks  # noqa: F401
-import hcrl_orbit  # noqa: F401
 from omni.isaac.orbit_tasks.utils import get_checkpoint_path, parse_env_cfg
 from omni.isaac.orbit_tasks.utils.wrappers.rsl_rl import RslRlOnPolicyRunnerCfg, RslRlVecEnvWrapper
 
@@ -101,7 +100,6 @@ def main():
         print("[INFO] Recording videos during training.")
         print_dict(video_kwargs, nesting=4)
         env = gym.wrappers.RecordVideo(env, **video_kwargs)
-        env.metadata["video.frames_per_second"] = 1.0 / env.unwrapped.step_dt
     # wrap around environment for rsl-rl
     env = RslRlVecEnvWrapper(env)
 
