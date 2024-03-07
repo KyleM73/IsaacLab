@@ -125,6 +125,12 @@ def main():
         env.unwrapped.sim.render()
     # simulate environment
     while simulation_app.is_running():
+        #print(obs[0, :])
+        #print("l_knee_fe_jp: ",obs[0, 12+13])
+        #print("l_knee_fe_jd: ",obs[0, 12+17])
+        #print("r_knee_fe_jp: ",obs[0, 12+15])
+        #print("r_knee_fe_jd: ",obs[0, 12+19])
+        #print()
         # run everything in inference mode
         with torch.inference_mode():
             # agent stepping
