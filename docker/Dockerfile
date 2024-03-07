@@ -77,8 +77,8 @@ RUN echo "alias orbit=${ORBIT_PATH}/orbit.sh" >> ${HOME}/.bashrc && \
 
 # make working directory as the orbit directory
 # this is the default directory when the container is run
-WORKDIR ${ORBIT_PATH}/..
+WORKDIR ${ORBIT_PATH}
 
 # rsl_rl
 COPY ../../rsl_rl/ ${ORBIT_PATH}/../rsl_rl
-RUN ${ORBIT_PATH}/../rsl_rl && ${ISAACSIM_PATH}/python.sh -m pip install -e .
+RUN cd ${ORBIT_PATH}/../rsl_rl && ${ISAACSIM_PATH}/python.sh -m pip install -e .
