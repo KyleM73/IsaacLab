@@ -20,6 +20,7 @@ services:
       - ISAACSIM_PATH=${DOCKER_ISAACSIM_PATH}
       # This should also be enabled for X11 forwarding
       # - DISPLAY=${DISPLAY}
+      - WANDB_API_KEY=${WANDB_API_KEY}
     volumes:
       # These volumes follow from this page
       # https://docs.omniverse.nvidia.com/app_isaacsim/app_isaacsim/install_faq.html#save-isaac-sim-configs-on-local-disk
@@ -70,6 +71,9 @@ services:
       - type: bind
         source: ../docs
         target: /workspace/orbit/docs
+      - type: bind
+        source: ../../rsl_rl
+        target: /workspace/rsl_rl
         # The effect of these volumes is twofold:
         # 1. Prevent root-owned files from flooding the _build and logs dir
         #    on the host machine

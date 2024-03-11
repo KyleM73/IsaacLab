@@ -83,5 +83,5 @@ RUN echo "alias orbit=${ORBIT_PATH}/orbit.sh" >> ${HOME}/.bashrc && \
 WORKDIR ${ORBIT_PATH}
 
 # rsl_rl
-COPY ../../rsl_rl/ ${ORBIT_PATH}/../rsl_rl
-RUN cd ${ORBIT_PATH}/../rsl_rl && ${ISAACSIM_PATH}/python.sh -m pip install -e .
+#COPY ../../rsl_rl/ ${ORBIT_PATH}/../rsl_rl
+#RUN cd ${ORBIT_PATH}/../rsl_rl && ${ISAACSIM_PATH}/python.sh -m pip install -e .
