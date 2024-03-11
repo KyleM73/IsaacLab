@@ -1,6 +1,65 @@
 Changelog
 ---------
 
+0.12.2 (2024-03-10)
+~~~~~~~~~~~~~~~~~~~
+
+Added
+^^^^^
+
+* Added observation terms for states of a rigid object in world frame.
+* Added randomization terms to set root state with randomized orientation and joint state within user-specified limits.
+* Added reward term for penalizing specific termination terms.
+
+Fixed
+^^^^^
+
+* Improved sampling of states inside randomization terms. Earlier, the code did multiple torch calls
+  for sampling different components of the vector. Now, it uses a single call to sample the entire vector.
+
+
+0.12.1 (2024-03-09)
+~~~~~~~~~~~~~~~~~~~
+
+Added
+^^^^^
+
+* Added an option to the last actions observation term to get a specific term by name from the action manager.
+  If None, the behavior remains the same as before (the entire action is returned).
+
+
+0.12.0 (2024-03-08)
+~~~~~~~~~~~~~~~~~~~
+
+Added
+^^^^^
+
+* Added functionality to sample flat patches on a generated terrain. This can be configured using
+  :attr:`omni.isaac.orbit.terrains.SubTerrainBaseCfg.flat_patch_sampling` attribute.
+* Added a randomization function for setting terrain-aware root state. Through this, an asset can be
+  reset to a randomly sampled flat patches.
+
+Fixed
+^^^^^
+
+* Separated normal and terrain-base position commands. The terrain based commands rely on the
+  terrain to sample flat patches for setting the target position.
+* Fixed command resample termination function.
+
+Changed
+^^^^^^^
+
+* Added the attribute :attr:`omni.isaac.orbit.envs.mdp.commands.UniformVelocityCommandCfg.heading_control_stiffness`
+  to control the stiffness of the heading control term in the velocity command term. Earlier, this was
+  hard-coded to 0.5 inside the term.
+
+Removed
+^^^^^^^
+
+* Removed the function :meth:`sample_new_targets` in the terrain importer. Instead the attribute
+  :attr:`omni.isaac.orbit.terrains.TerrainImporter.flat_patches` should be used to sample new targets.
+
+
 0.11.3 (2024-03-04)
 ~~~~~~~~~~~~~~~~~~~
 
