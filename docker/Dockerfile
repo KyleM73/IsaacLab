@@ -78,10 +78,17 @@ RUN echo "alias orbit=${ORBIT_PATH}/orbit.sh" >> ${HOME}/.bashrc && \
     echo "alias tensorboard='${ISAACSIM_PATH}/python.sh ${ISAACSIM_PATH}/tensorboard'" >> ${HOME}/.bashrc && \
     echo "export TZ=$(date +%Z)" >> ${HOME}/.bashrc
 
+# rsl_rl
+#COPY ../rsl_rl ${ORBIT_PATH}/../rsl_rl
+RUN ${ISAACSIM_PATH}/python.sh -m pip install --upgrade pip
+#RUN ${ISAACSIM_PATH}/python.sh -m pip install --editable ../rsl_rl
+#RUN orbit -p -m pip install -e ${ORBIT_PATH}/../rsl_rl
+
+# hcrl_orbit
+RUN git config --global --add safe.directory /workspace/orbit
+RUN git config --global --add safe.directory /workspace/orbit/source/extensions/hcrl_orbit
+RUN git config --global --add safe.directory /workspace/rsl_rl
+
 # make working directory as the orbit directory
 # this is the default directory when the container is run
 WORKDIR ${ORBIT_PATH}
-
-# rsl_rl
-#COPY ../../rsl_rl/ ${ORBIT_PATH}/../rsl_rl
-#RUN cd ${ORBIT_PATH}/../rsl_rl && ${ISAACSIM_PATH}/python.sh -m pip install -e .
