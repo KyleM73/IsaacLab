@@ -62,10 +62,12 @@ Guidelines for modifications:
 * Lionel Gulich
 * Louis Le Lay
 * Lorenz Wellhausen
+* Manuel Schweiger
 * Masoud Moghani
 * Michael Gussert
 * Michael Noseworthy
 * Muhong Guo
+* Nicola Loi
 * Nuralem Abizov
 * Oyindamola Omotuyi
 * Özhan Özen
